@@ -1,32 +1,14 @@
 [
   {
-    "id": 6,
-    "name": "as",
-    "latitude": "23",
-    "longitude": "21"
+    "id": 20,
+    "name": "dsa",
+    "latitude": 2,
+    "longitude": null
   },
   {
-    "id": 9,
-    "name": "das",
-    "latitude": 243,
-    "longitude": 23
-  },
-  {
-    "id": 10,
-    "name": "teste122",
-    "latitude": "12",
-    "longitude": "32"
-  },
-  {
-    "id": 12,
-    "name": "resr",
-    "latitude": "2",
-    "longitude": "32"
-  },
-  {
-    "id": 13,
-    "name": "teste",
-    "latitude": "12",
-    "longitude": "32"
+    "id": 21,
+    "name": "aaaaaaaaaaaaa",
+    "latitude": 22,
+    "longitude": 22
   }
 ]

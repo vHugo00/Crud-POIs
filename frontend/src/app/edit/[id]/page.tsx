@@ -1,18 +1,35 @@
 "use client";
 
 import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import * as Input from '@/components/Form/Input';
 import { Button } from '@/components/Button';
-import { useState } from 'react';
-import 'toastify-js/src/toastify.css'; 
 import Toastify from 'toastify-js';
+import 'toastify-js/src/toastify.css';
 
-export default function Home() {
+export default function EditPage() {
   const [formData, setFormData] = useState({
     name: '',
     latitude: '',
     longitude: '',
   });
+  
+  const router = useRouter();
+  const params = useParams(); // Pegando o id da URL corretamente no Next.js 13
+  const id = params.id; // Agora o ID está acessível
+
+  useEffect(() => {
+    const fetchLocation = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/location/${id}`);
+        setFormData(response.data);
+      } catch (error) {
+        console.error("Erro ao carregar local:", error);
+      }
+    };
+    fetchLocation();
+  }, [id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -23,41 +40,19 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!formData.name.trim()) {
-      Toastify({
-        text: "O campo 'Nome' não pode estar vazio!",
-        duration: 3000,
-        gravity: "top",
-        position: 'right',
-        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-      }).showToast();
-      return;
-    }
-
-    if (isNaN(Number(formData.latitude)) || isNaN(Number(formData.longitude))) {
-      Toastify({
-        text: "As coordenadas devem ser números válidos!",
-        duration: 3000,
-        gravity: "top",
-        position: 'right',
-        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-      }).showToast();
-      return;
-    }
-
     try {
-      const response = await axios.post('http://localhost:5000/api/location', formData);
+      await axios.put(`http://localhost:5000/api/location/${id}`, formData);
       Toastify({
-        text: "Local salvo com sucesso!",
+        text: "Local atualizado com sucesso!",
         duration: 3000,
         gravity: "top",
         position: 'right',
-        style: { background: "linear-gradient(to right, #00b09b, #96c93d)" },
+        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
       }).showToast();
-      setFormData({ name: '', latitude: '', longitude: '' });
+      router.push("/register");
     } catch (error) {
       Toastify({
-        text: "Erro ao salvar local!",
+        text: "Erro ao atualizar local!",
         duration: 3000,
         gravity: "top",
         position: 'right',
@@ -68,8 +63,8 @@ export default function Home() {
 
   return (
     <>
-      <h1 className="text-3xl font-medium text-zinc-900 dark:text-zinc-100">Registros de POIs</h1>
-      <form id="settings" className="mt-6 flex w-full flex-col gap-5" onSubmit={handleSubmit}>
+      <h1 className="text-3xl font-medium text-zinc-900 dark:text-zinc-100">Editar Local</h1>
+      <form className="mt-6 flex w-full flex-col gap-5" onSubmit={handleSubmit}>
         <div className="grid gap-3 pt-5 lg:grid-cols-form">
           <label htmlFor="name" className="text-sm font-medium text-zinc-700 dark:text-zinc-100">Nome</label>
           <Input.Root>
@@ -110,8 +105,8 @@ export default function Home() {
         </div>
 
         <div className="flex items-center justify-end gap-2 pt-5">
-          <Button type="button" variant="outline">Cancelar</Button>
-          <Button type="submit" form="settings" variant="primary">Salvar</Button>
+          <Button type="button" variant="outline" onClick={() => router.back()}>Cancelar</Button>
+          <Button type="submit" variant="primary">Atualizar</Button>
         </div>
       </form>
     </>
