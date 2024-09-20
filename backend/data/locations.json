@@ -1,0 +1,14 @@
+[
+  {
+    "id": 2,
+    "name": "Mercado",
+    "latitude": "23",
+    "longitude": "43"
+  },
+  {
+    "id": 3,
+    "name": "restaurante",
+    "latitude": "56",
+    "longitude": "31"
+  }
+]
