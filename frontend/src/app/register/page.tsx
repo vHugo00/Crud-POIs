@@ -6,7 +6,6 @@ import * as Input from '@/components/Form/Input';
 import { Pen, Search, Trash } from 'lucide-react';
 import { toast } from 'react-toastify'; 
 import 'react-toastify/dist/ReactToastify.css'; 
-import { Button } from '@/components/Button';
 import { useRouter } from 'next/navigation';
 
 interface Location {
@@ -58,10 +57,11 @@ export default function Register() {
 
       {/* Campo de busca */}
       <div className="mb-4">
-        <label htmlFor="searchQuery" className="block mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-100">
+        <label htmlFor="searchQuery" className="block mb-4 mt-4 text-sm font-medium text-zinc-700 dark:text-zinc-100">
           Buscar Local
         </label>
         <Input.Root>
+        <Search className='text-zinc-600'/ >
           <Input.Control
             id="searchQuery"
             name="searchQuery"
@@ -74,7 +74,7 @@ export default function Register() {
 
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3">Local</th>
               <th scope="col" className="px-6 py-3 text-center">Latitude</th>
@@ -85,10 +85,10 @@ export default function Register() {
           </thead>
           <tbody>
             {filteredLocations.map((location) => (
-              <tr key={location.id} className="border-b odd:bg-white even:bg-gray-50">
+              <tr key={location.id} className="border-b odd:bg-white even:bg-gray-50 ">
                 <th scope="row" className="px-6 py-4 font-medium text-gray-900">{location.name}</th>
-                <td className="px-6 py-4 text-center">{location.latitude}</td>
-                <td className="px-6 py-4 text-center">{location.longitude}</td>
+                <td className="px-6 py-4 text-center text-gray-800">{location.latitude}</td>
+                <td className="px-6 py-4 text-center text-gray-800">{location.longitude}</td>
                 <td className="px-6 py-4 text-center">
                   <button onClick={() => redirectToEdit(location.id)} className="text-blue-600 hover:underline">
                     <Pen />

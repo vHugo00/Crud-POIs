@@ -20,16 +20,17 @@ export default function EditPage() {
   const id = params.id; // Agora o ID está acessível
 
   useEffect(() => {
-    const fetchLocation = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/api/location/${id}`);
-        setFormData(response.data);
-      } catch (error) {
-        console.error("Erro ao carregar local:", error);
-      }
-    };
-    fetchLocation();
+    if (id) {
+      axios.get(`http://localhost:5000/api/location/${id}`)
+        .then(response => {
+          setFormData(response.data); // Preencher o formulário com o dado retornado
+        })
+        .catch(error => {
+          console.error("Erro ao carregar local:", error);
+        });
+    }
   }, [id]);
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
