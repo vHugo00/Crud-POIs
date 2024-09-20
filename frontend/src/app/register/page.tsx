@@ -113,7 +113,7 @@ export default function Home() {
           </Input.Prefix>
           <Input.Control 
             type="text" 
-            placeholder="Encontrar um local (latitude,longitude)" 
+            placeholder="Digite o nome do local" 
             value={searchQuery} 
             onChange={(e) => setSearchQuery(e.target.value)} 
           />

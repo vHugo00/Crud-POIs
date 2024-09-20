@@ -35,7 +35,7 @@ router.post('/api/location', (req, res) => {
   const locations = readLocations();
   const { name, latitude, longitude } = req.body;
   
-  if (!name || latitude === undefined || longitude === undefined) {
+  if (!name || !latitude || !longitude) {
     return res.status(400).json({ error: 'Nome, latitude e longitude são obrigatórios' });
   }
 
