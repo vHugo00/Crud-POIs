@@ -79,6 +79,8 @@ const deleteLocation = (req, res) => {
   res.status(200).json({ message: 'Local excluído com sucesso' });
 };
 
+
+
 module.exports = {
   getAllLocations,
   createLocation,

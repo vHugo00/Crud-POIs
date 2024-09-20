@@ -110,7 +110,6 @@ export default function Home() {
         </div>
 
         <div className="flex items-center justify-end gap-2 pt-5">
-          <Button type="button" variant="outline">Cancelar</Button>
           <Button type="submit" form="settings" variant="primary">Salvar</Button>
         </div>
       </form>

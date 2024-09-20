@@ -1,5 +1,4 @@
-"use client";
-
+"use client"
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -14,23 +13,32 @@ export default function EditPage() {
     latitude: '',
     longitude: '',
   });
-  
+
   const router = useRouter();
-  const params = useParams(); // Pegando o id da URL corretamente no Next.js 13
-  const id = params.id; // Agora o ID está acessível
+  const params = useParams();
+  const id = params.id;
+
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (id) {
+      console.log(`Fetching location with ID: ${id}`); // Verificação
       axios.get(`http://localhost:5000/api/location/${id}`)
         .then(response => {
-          setFormData(response.data); // Preencher o formulário com o dado retornado
+          console.log("Local data received:", response.data); // Verificar dados recebidos
+          setFormData({
+            name: response.data.name || '',
+            latitude: response.data.latitude || '',
+            longitude: response.data.longitude || ''
+          });
+          setIsLoading(false); 
         })
         .catch(error => {
           console.error("Erro ao carregar local:", error);
+          setIsLoading(false);
         });
     }
   }, [id]);
-  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
