@@ -1,4 +1,5 @@
-"use client"
+"use client";
+
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -22,14 +23,13 @@ export default function EditPage() {
 
   useEffect(() => {
     if (id) {
-      console.log(`Fetching location with ID: ${id}`); // Verificação
-      axios.get(`http://localhost:5000/api/location/${id}`)
+      axios.get(`http://localhost:5000/api/location/#${id}`)
         .then(response => {
-          console.log("Local data received:", response.data); // Verificar dados recebidos
+          const locationData = response.data[0]; // Garantir que pegue o primeiro item do array
           setFormData({
-            name: response.data.name || '',
-            latitude: response.data.latitude || '',
-            longitude: response.data.longitude || ''
+            name: locationData.name || '',
+            latitude: locationData.latitude || '',
+            longitude: locationData.longitude || '',
           });
           setIsLoading(false); 
         })
@@ -81,7 +81,7 @@ export default function EditPage() {
               name="name"
               id="name"
               placeholder="Digite aqui o nome do local"
-              value={formData.name}
+              value={formData.name || ''} // Garantir que tenha um valor sempre
               onChange={handleChange}
             />
           </Input.Root>
@@ -96,7 +96,7 @@ export default function EditPage() {
                 id="latitude"
                 type="text"
                 placeholder="x"
-                value={formData.latitude}
+                value={formData.latitude || ''} // Garantir que tenha um valor sempre
                 onChange={handleChange}
               />
             </Input.Root>
@@ -106,7 +106,7 @@ export default function EditPage() {
                 id="longitude"
                 type="text"
                 placeholder="y"
-                value={formData.longitude}
+                value={formData.longitude || ''} // Garantir que tenha um valor sempre
                 onChange={handleChange}
               />
             </Input.Root>
