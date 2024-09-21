@@ -67,7 +67,7 @@ export default function Home() {
 
   return (
     <>
-      <ToastContainer /> {/* Adicione o ToastContainer aqui */}
+      <ToastContainer />
       <h1 className="text-3xl font-medium text-zinc-900 dark:text-zinc-100">Registros de POIs</h1>
       <form id="settings" className="mt-6 flex w-full flex-col gap-5" onSubmit={handleSubmit}>
         <div className="grid gap-3 pt-5 lg:grid-cols-form">

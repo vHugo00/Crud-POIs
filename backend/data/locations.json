@@ -1,14 +1,38 @@
 [
   {
-    "id": 4,
-    "name": "Nova Localização",
-    "latitude": 50,
-    "longitude": 60
+    "id": 12,
+    "name": "Lanchonete",
+    "latitude": 27,
+    "longitude": 12
   },
   {
-    "id": 10,
-    "name": "teste",
-    "latitude": 232,
-    "longitude": 50
+    "id": 13,
+    "name": "Posto",
+    "latitude": 31,
+    "longitude": 18
+  },
+  {
+    "id": 14,
+    "name": "Joalheria",
+    "latitude": 15,
+    "longitude": 12
+  },
+  {
+    "id": 15,
+    "name": "Pub",
+    "latitude": 12,
+    "longitude": 8
+  },
+  {
+    "id": 16,
+    "name": "Supermercado",
+    "latitude": 23,
+    "longitude": 6
+  },
+  {
+    "id": 17,
+    "name": "Churrascaria",
+    "latitude": 28,
+    "longitude": 2
   }
 ]

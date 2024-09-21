@@ -1,5 +1,4 @@
 const { readLocations, writeLocations } = require('../services/locationService');
-const { haversineDistance } = require('../utils/distanceUtil');
 
 // Listar todos os locais
 const getAllLocations = (req, res) => {
@@ -10,13 +9,11 @@ const getAllLocations = (req, res) => {
 const getLocationById = (req, res) => {
   const { id } = req.params;
   const locations = readLocations();
-  console.log(locations); // Adicione isso para verificar os locais
 
   const location = locations.find(loc => loc.id === parseInt(id));
   if (!location) return res.status(404).send('Local não encontrado.');
   res.json(location);
 };
-
 
 // Criar um novo local
 const createLocation = (req, res) => {
@@ -122,12 +119,6 @@ const getNearbyLocations = (req, res) => {
   if (!latitude || !longitude || !maxDistance) {
     return res.status(400).json({ error: 'Latitude, longitude e distância máxima são obrigatórios' });
   }
-
-  const locations = readLocations();
-  const nearbyLocations = locations.filter(location =>
-    haversineDistance(parseFloat(latitude), parseFloat(longitude), location.latitude, location.longitude) <= parseFloat(maxDistance)
-  );
-
   res.json(nearbyLocations);
 };
 

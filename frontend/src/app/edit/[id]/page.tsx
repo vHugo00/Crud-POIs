@@ -79,15 +79,13 @@ export default function EditPage() {
 
     try {
       await axios.put(`http://localhost:5000/api/location/${id}`, formData);
-
-      // Exibe a mensagem de sucesso e aguarda antes de redirecionar
       toast.success("Local atualizado com sucesso!", {
         position: "top-right",
         autoClose: 1000,
       });
 
       setTimeout(() => {
-        router.push("/register"); // Aguarda 3 segundos antes de redirecionar
+        router.push("/register");
       }, 3000);
 
     } catch (error) {
@@ -104,7 +102,7 @@ export default function EditPage() {
 
   return (
     <>
-      <ToastContainer /> {/* Certifique-se de adicionar o ToastContainer aqui */}
+      <ToastContainer />
       <h1 className="text-3xl font-medium text-zinc-900 dark:text-zinc-100">Editar Local</h1>
       <form className="mt-6 flex w-full flex-col gap-5" onSubmit={handleSubmit}>
         <div className="grid gap-3 pt-5 lg:grid-cols-form">
