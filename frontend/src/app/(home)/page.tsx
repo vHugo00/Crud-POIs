@@ -4,8 +4,8 @@ import axios from 'axios';
 import * as Input from '@/components/Form/Input';
 import { Button } from '@/components/Button';
 import { useState } from 'react';
-import 'toastify-js/src/toastify.css';
-import Toastify from 'toastify-js';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Home() {
   const [formData, setFormData] = useState({
@@ -24,50 +24,50 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!formData.name.trim()) {
-      Toastify({
-        text: "O campo 'Nome' não pode estar vazio!",
-        duration: 3000,
-        gravity: "top",
-        position: 'right',
-        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-      }).showToast();
+      toast.error("O campo 'Nome' não pode estar vazio!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
       return;
     }
 
-    if (isNaN(Number(formData.latitude)) || isNaN(Number(formData.longitude))) {
-      Toastify({
-        text: "As coordenadas devem ser números válidos!",
-        duration: 3000,
-        gravity: "top",
-        position: 'right',
-        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-      }).showToast();
+    const lat = parseFloat(formData.latitude);
+    const long = parseFloat(formData.longitude);
+
+    if (isNaN(lat) || isNaN(long)) {
+      toast.error("As coordenadas devem ser números válidos!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
+    }
+
+    if (lat < 0 || long < 0) {
+      toast.error("As coordenadas devem ser números positivos!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
       return;
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/location', formData);
-      Toastify({
-        text: "Local salvo com sucesso!",
-        duration: 3000,
-        gravity: "top",
-        position: 'right',
-        style: { background: "linear-gradient(to right, #00b09b, #96c93d)" },
-      }).showToast();
+      await axios.post('http://localhost:5000/api/location', formData);
+      toast.success("Local salvo com sucesso!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
       setFormData({ name: '', latitude: '', longitude: '' });
     } catch (error) {
-      Toastify({
-        text: "Verifique se todos os campos foram preenchidos!",
-        duration: 3000,
-        gravity: "top",
-        position: 'right',
-        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-      }).showToast();
+      toast.error("Verifique se todos os campos foram preenchidos!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     }
   };
 
   return (
     <>
+      <ToastContainer /> {/* Adicione o ToastContainer aqui */}
       <h1 className="text-3xl font-medium text-zinc-900 dark:text-zinc-100">Registros de POIs</h1>
       <form id="settings" className="mt-6 flex w-full flex-col gap-5" onSubmit={handleSubmit}>
         <div className="grid gap-3 pt-5 lg:grid-cols-form">

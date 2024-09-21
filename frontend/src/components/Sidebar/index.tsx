@@ -4,7 +4,6 @@ import { Menu } from 'lucide-react'
 import { Logo } from './Logo'
 import { Profile } from './Profile'
 import { Navigation } from './Navigation'
-import { UsedSpaceWidget } from './UsedSpaceWidget'
 import * as Collapsible from '@radix-ui/react-collapsible'
 import { Button } from '../Button'
 
@@ -33,7 +32,6 @@ export function Sidebar() {
 
             </nav>
 
-            <UsedSpaceWidget />
             <div className="h-px bg-zinc-200 dark:bg-zinc-800" />
             <Profile />
           </div>

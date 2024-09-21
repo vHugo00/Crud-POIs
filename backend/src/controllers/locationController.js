@@ -7,6 +7,17 @@ const getAllLocations = (req, res) => {
   res.json(locations);
 };
 
+const getLocationById = (req, res) => {
+  const { id } = req.params;
+  const locations = readLocations();
+  console.log(locations); // Adicione isso para verificar os locais
+
+  const location = locations.find(loc => loc.id === parseInt(id));
+  if (!location) return res.status(404).send('Local não encontrado.');
+  res.json(location);
+};
+
+
 // Criar um novo local
 const createLocation = (req, res) => {
   const locations = readLocations();
@@ -22,11 +33,21 @@ const createLocation = (req, res) => {
     return res.status(400).json({ error: 'Longitude é obrigatória' });
   }
 
+  const lat = parseFloat(latitude);
+  const long = parseFloat(longitude);
+
+  if (lat < 0) {
+    return res.status(400).json({ error: 'Latitude deve ser um número positivo' });
+  }
+  if (long < 0) {
+    return res.status(400).json({ error: 'Longitude deve ser um número positivo' });
+  }
+
   const newLocation = {
     id: locations.length > 0 ? locations[locations.length - 1].id + 1 : 1,
     name,
-    latitude: parseFloat(latitude),
-    longitude: parseFloat(longitude),
+    latitude: lat,
+    longitude: long,
   };
 
   locations.push(newLocation);
@@ -49,14 +70,33 @@ const updateLocation = (req, res) => {
   if (!name) {
     return res.status(400).json({ error: 'Nome é obrigatório' });
   }
-  if (latitude === undefined) {
+  if (!latitude) {
     return res.status(400).json({ error: 'Latitude é obrigatória' });
   }
-  if (longitude === undefined) {
+  if (!longitude) {
     return res.status(400).json({ error: 'Longitude é obrigatória' });
   }
 
-  locations[locationIndex] = { id: parseInt(id), name, latitude: parseFloat(latitude), longitude: parseFloat(longitude) };
+  const lat = parseFloat(latitude);
+  const long = parseFloat(longitude);
+
+  if (isNaN(lat) || isNaN(long)) {
+    return res.status(400).json({ error: 'Latitude e longitude devem ser números válidos' });
+  }
+  if (lat < 0) {
+    return res.status(400).json({ error: 'Latitude deve ser um número positivo' });
+  }
+  if (long < 0) {
+    return res.status(400).json({ error: 'Longitude deve ser um número positivo' });
+  }
+
+  locations[locationIndex] = {
+    id: parseInt(id),
+    name,
+    latitude: lat,
+    longitude: long
+  };
+
   writeLocations(locations);
   res.status(200).json(locations[locationIndex]);
 };
@@ -94,6 +134,7 @@ const getNearbyLocations = (req, res) => {
 
 module.exports = {
   getAllLocations,
+  getLocationById,
   createLocation,
   getNearbyLocations,
   updateLocation,

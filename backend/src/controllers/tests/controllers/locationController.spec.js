@@ -17,7 +17,7 @@
      - Retona um erro 404 para localização não existente
   
   5. getNearbyLocations:
-     - Retona locais proximos com base na distância
+     - Retona locais proximos
      - Retona um erro 400 para parametros ausentes
 */
 

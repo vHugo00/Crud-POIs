@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import * as Input from '@/components/Form/Input';
 import { Pen, Search, Trash } from 'lucide-react';
-import { toast } from 'react-toastify'; 
-import 'react-toastify/dist/ReactToastify.css'; 
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation';
 
 interface Location {
@@ -53,6 +53,7 @@ export default function Register() {
 
   return (
     <>
+      <ToastContainer /> {/* Adicione o ToastContainer aqui */}
       <h1 className="text-3xl font-medium text-zinc-900 dark:text-zinc-100">Listagem de POIs</h1>
 
       {/* Campo de busca */}
@@ -61,7 +62,7 @@ export default function Register() {
           Buscar Local
         </label>
         <Input.Root>
-        <Search className='text-zinc-600'/ >
+          <Search className='text-zinc-600' />
           <Input.Control
             id="searchQuery"
             name="searchQuery"

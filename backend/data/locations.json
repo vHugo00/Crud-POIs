@@ -1,14 +1,14 @@
 [
   {
-    "id": 2,
-    "name": "Local 3",
-    "latitude": 50,
-    "longitude": 70
-  },
-  {
-    "id": 3,
-    "name": "Local 3",
+    "id": 4,
+    "name": "Nova Localização",
     "latitude": 50,
     "longitude": 60
+  },
+  {
+    "id": 10,
+    "name": "teste",
+    "latitude": 232,
+    "longitude": 50
   }
 ]
