@@ -4,7 +4,7 @@ import axios from 'axios';
 import * as Input from '@/components/Form/Input';
 import { Button } from '@/components/Button';
 import { useState } from 'react';
-import 'toastify-js/src/toastify.css'; 
+import 'toastify-js/src/toastify.css';
 import Toastify from 'toastify-js';
 
 export default function Home() {
@@ -57,11 +57,11 @@ export default function Home() {
       setFormData({ name: '', latitude: '', longitude: '' });
     } catch (error) {
       Toastify({
-        text: "Erro ao salvar local!",
+        text: "Verifique se todos os campos foram preenchidos!",
         duration: 3000,
         gravity: "top",
         position: 'right',
-        backgroundColor: "#E5010B",
+        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
       }).showToast();
     }
   };
