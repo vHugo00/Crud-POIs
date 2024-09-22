@@ -23,6 +23,8 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Validação do nome
     if (!formData.name.trim()) {
       toast.error("O campo 'Nome' não pode estar vazio!", {
         position: "top-right",
@@ -31,24 +33,33 @@ export default function Home() {
       return;
     }
 
-    const lat = parseFloat(formData.latitude);
-    const long = parseFloat(formData.longitude);
+    const lat = formData.latitude.trim();
+    const long = formData.longitude.trim();
 
-    if (isNaN(lat) || isNaN(long)) {
-      toast.error("As coordenadas devem ser números válidos!", {
+    // Verificação se a latitude e longitude contêm caracteres inválidos
+    if (!/^\d+$/.test(lat) || !/^\d+$/.test(long)) {
+      toast.error("As coordenadas devem conter apenas números inteiros e positivos, sem vírgulas ou pontos!", {
         position: "top-right",
         autoClose: 3000,
       });
       return;
     }
 
-    if (lat < 0 || long < 0) {
-      toast.error("As coordenadas devem ser números positivos!", {
+    // Converte as coordenadas para números inteiros
+    const latNumber = Number(lat);
+    const longNumber = Number(long);
+
+    // Verifica se as coordenadas são números inteiros e positivos
+    if (!Number.isInteger(latNumber) || latNumber < 0 || !Number.isInteger(longNumber) || longNumber < 0) {
+      toast.error("As coordenadas devem ser números inteiros e positivos!", {
         position: "top-right",
         autoClose: 3000,
       });
       return;
     }
+
+    // Coordenadas válidas, pode prosseguir com o envio
+    console.log("Coordenadas válidas:", { lat: latNumber, long: longNumber });
 
     try {
       await axios.post('http://localhost:5000/api/location', formData);

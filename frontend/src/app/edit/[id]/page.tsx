@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -49,7 +49,7 @@ export default function EditPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validações
+    // Validação do nome
     if (!formData.name.trim()) {
       toast.error("O campo 'Nome' não pode estar vazio!", {
         position: "top-right",
@@ -58,19 +58,26 @@ export default function EditPage() {
       return;
     }
 
-    const lat = parseFloat(formData.latitude);
-    const long = parseFloat(formData.longitude);
+    // Converte latitude e longitude para string e aplica o trim
+    const lat = String(formData.latitude).trim();
+    const long = String(formData.longitude).trim();
 
-    if (isNaN(lat) || isNaN(long)) {
-      toast.error("As coordenadas devem ser números válidos!", {
+    // Verificação se a latitude e longitude contêm caracteres inválidos
+    if (!/^\d+$/.test(lat) || !/^\d+$/.test(long)) {
+      toast.error("As coordenadas devem conter apenas números inteiros e positivos, sem vírgulas ou pontos!", {
         position: "top-right",
         autoClose: 3000,
       });
       return;
     }
 
-    if (lat < 0 || long < 0) {
-      toast.error("As coordenadas devem ser números positivos!", {
+    // Converte as coordenadas para números inteiros
+    const latNumber = Number(lat);
+    const longNumber = Number(long);
+
+    // Verifica se as coordenadas são números inteiros e positivos
+    if (!Number.isInteger(latNumber) || latNumber < 0 || !Number.isInteger(longNumber) || longNumber < 0) {
+      toast.error("As coordenadas devem ser números inteiros e positivos!", {
         position: "top-right",
         autoClose: 3000,
       });
@@ -78,7 +85,11 @@ export default function EditPage() {
     }
 
     try {
-      await axios.put(`http://localhost:5000/api/location/${id}`, formData);
+      await axios.put(`http://localhost:5000/api/location/${id}`, {
+        ...formData,
+        latitude: latNumber,
+        longitude: longNumber
+      });
       toast.success("Local atualizado com sucesso!", {
         position: "top-right",
         autoClose: 1000,
