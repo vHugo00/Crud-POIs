@@ -112,43 +112,6 @@ const deleteLocation = (req, res) => {
   res.status(200).json({ message: 'Local excluído com sucesso' });
 };
 
-// Buscar por proximidade
-const getNearbyLocations = (req, res) => {
-  const { latitude, longitude, maxDistance } = req.query;
-
-  if (!latitude || !longitude || !maxDistance) {
-    return res.status(400).json({ error: 'Latitude, longitude e distância máxima são obrigatórios' });
-  }
-
-  const lat = parseFloat(latitude);
-  const long = parseFloat(longitude);
-  const maxDist = parseFloat(maxDistance);
-
-  const locations = readLocations(); // Função que lê os locais disponíveis
-  const nearbyLocations = locations.filter(location => {
-    const distance = calculateDistance(lat, long, location.latitude, location.longitude);
-    return distance <= maxDist;
-  });
-
-  if (nearbyLocations.length === 0) {
-    return res.status(404).json({ message: 'Nenhum local encontrado próximo a estas coordenadas.' });
-  }
-
-  res.json(nearbyLocations);
-};
-
-const calculateDistance = (lat1, lon1, lat2, lon2) => {
-  const R = 6371; // Raio da Terra em km
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c; // Distância em km
-};
-
 
 module.exports = {
   getAllLocations,
@@ -156,5 +119,4 @@ module.exports = {
   createLocation,
   updateLocation,
   deleteLocation,
-  getNearbyLocations,
 };

@@ -13,6 +13,7 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
+      <link rel="icon" href="/yandex.svg" />
       <body className={inter.className}>
         <div className="relative min-h-screen dark:bg-zinc-900 lg:grid lg:grid-cols-app">
           <Sidebar />
