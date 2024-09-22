@@ -1,20 +1,20 @@
-# Usa uma imagem base do Node.js
+# Imagem base do Node.js
 FROM node:18
 
-# Define o diretório de trabalho no contêiner
+# Define diretório
 WORKDIR /app
 
-# Copia o package.json e o package-lock.json (caso exista)
+# Copia o package.json e o package-lock.json
 COPY package*.json ./
 
 # Instala as dependências
 RUN npm install
 
-# Copia o código-fonte para dentro do contêiner
+# Copia o código para dentro do contêiner
 COPY . .
 
-# Define a porta exposta pelo contêiner
+# Porta
 EXPOSE 5000
 
-# Comando para rodar o ambiente de desenvolvimento
+# Executar
 CMD ["npm", "run", "dev"]

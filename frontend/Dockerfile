@@ -1,30 +1,30 @@
-# Frontend Dockerfile
+# Dockerfile do Frontend
 FROM node:18-alpine AS build
 
-# Set working directory
+# Define o diretório
 WORKDIR /app
 
-# Copy package.json and install dependencies
+# Copia o package.json e instala as dependências
 COPY package*.json ./
 RUN npm install
 
-# Copy all source files
+# Copia todos os arquivos de origem
 COPY . .
 
-# Build the Next.js application
+# Constrói a aplicação Next.js
 RUN npm run build
 
-# Stage 2: Production container
+# Estágio 2: Contêiner de produção
 FROM node:18-alpine AS production
 
-# Set working directory
+# Define o diretório
 WORKDIR /app
 
-# Copy built files from the previous stage
+# Copia os arquivos
 COPY --from=build /app ./
 
-# Expose the Next.js port
+# Porta
 EXPOSE 3000
 
-# Start the Next.js application
+# Inicia 
 CMD ["npm", "start"]
