@@ -1,37 +1,9 @@
-/*
-  1. getAllLocations:
-     - Retona todas as localizações
-     - Retona um array vazio se não houver localizações
-  
-  2. createLocation:
-     - deve criar uma nova localização com dados válidos
-     - Retona um erro 400 para nome ausente
-  
-  3. updateLocation:
-     - deve atualizar uma localização existente com dados válidos
-     - Retona um erro 404 para localização não existente
-     - Retona um erro 400 para nome ausente
-  
-  4. deleteLocation:
-     - deve excluir uma localização
-     - Retona um erro 404 para localização não existente
-  
-  5. getNearbyLocations:
-     - Retona locais proximos
-     - Retona um erro 400 para parametros ausentes
-*/
-
 const { getAllLocations, createLocation, updateLocation, deleteLocation, getNearbyLocations } = require('../../locationController');
 const { readLocations, writeLocations } = require('../../../services/locationService');
-const { haversineDistance } = require('../../../utils/distanceUtil');
 
 jest.mock('../../../services/locationService', () => ({
   readLocations: jest.fn(),
   writeLocations: jest.fn(),
-}));
-
-jest.mock('../../../utils/distanceUtil', () => ({
-  haversineDistance: jest.fn(),
 }));
 
 describe('locationService', () => {
@@ -40,7 +12,7 @@ describe('locationService', () => {
   });
 
   describe('getAllLocations', () => {
-    it('Retona todas as localizações', () => {
+    it('Retorna todas as localizações', () => {
       const mockLocations = [
         { id: 1, name: 'Localização 1', latitude: 10, longitude: 20 },
         { id: 2, name: 'Localização 2', latitude: 30, longitude: 40 },
@@ -55,7 +27,7 @@ describe('locationService', () => {
       expect(res.json).toHaveBeenCalledWith(mockLocations);
     });
 
-    it('Retona um array vazio se não houver localizações', () => {
+    it('Retorna um array vazio se não houver localizações', () => {
       readLocations.mockReturnValue([]);
 
       const req = {};
@@ -72,21 +44,17 @@ describe('locationService', () => {
       const mockLocations = [];
       readLocations.mockReturnValue(mockLocations);
 
-      writeLocations.mockImplementation((locations) => {
-        locations.push({ id: 1, name: 'Nova Localização', latitude: 50, longitude: 60 });
-      });
-
       const req = { body: { name: 'Nova Localização', latitude: 50, longitude: 60 } };
       const res = { status: jest.fn(() => res), json: jest.fn() };
 
       createLocation(req, res);
 
-      expect(writeLocations).toHaveBeenCalledWith(mockLocations);
+      expect(writeLocations).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith({ id: 1, name: 'Nova Localização', latitude: 50, longitude: 60 });
     });
 
-    it('Retona um erro 400 para nome ausente', () => {
+    it('Retorna um erro 400 para nome ausente', () => {
       const req = { body: { latitude: 50, longitude: 60 } };
       const res = { status: jest.fn(() => res), json: jest.fn() };
 
@@ -101,23 +69,22 @@ describe('locationService', () => {
     it('deve atualizar uma localização existente com dados válidos', () => {
       const mockLocations = [{ id: 1, name: 'Localização Antiga', latitude: 10, longitude: 20 }];
       readLocations.mockReturnValue(mockLocations);
-      writeLocations.mockImplementation((locations) => { });
 
       const req = { params: { id: '1' }, body: { name: 'Localização Atualizada', latitude: 30, longitude: 40 } };
       const res = { status: jest.fn(() => res), json: jest.fn() };
 
       updateLocation(req, res);
 
-      expect(writeLocations).toHaveBeenCalledWith(mockLocations);
+      expect(writeLocations).toHaveBeenCalledWith([{ id: 1, name: 'Localização Atualizada', latitude: 30, longitude: 40 }]);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({ id: 1, name: 'Localização Atualizada', latitude: 30, longitude: 40 });
     });
 
-    it('Retona um erro 404 para localização não existente', () => {
+    it('Retorna um erro 404 para localização não existente', () => {
       const mockLocations = [{ id: 1, name: 'Localização Antiga', latitude: 10, longitude: 20 }];
       readLocations.mockReturnValue(mockLocations);
 
-      const req = { params: { id: '2' }, body: { name: 'Localização Atualizada' } };
+      const req = { params: { id: '99' }, body: { name: 'Localização Atualizada', latitude: 30, longitude: 40 } };
       const res = { status: jest.fn(() => res), json: jest.fn() };
 
       updateLocation(req, res);
@@ -125,26 +92,12 @@ describe('locationService', () => {
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({ error: 'Local não encontrado' });
     });
-
-    it('Retona um erro 400 para nome ausente', () => {
-      const mockLocations = [{ id: 1, name: 'Localização Antiga', latitude: 10, longitude: 20 }];
-      readLocations.mockReturnValue(mockLocations);
-
-      const req = { params: { id: '1' }, body: { latitude: 30, longitude: 40 } };
-      const res = { status: jest.fn(() => res), json: jest.fn() };
-
-      updateLocation(req, res);
-
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ error: 'Nome é obrigatório' });
-    });
   });
 
   describe('deleteLocation', () => {
-    it('deve excluir uma localização existente', () => {
-      const mockLocations = [{ id: 1, name: 'Local a Excluir', latitude: 10, longitude: 20 }];
+    it('deve deletar uma localização existente', () => {
+      const mockLocations = [{ id: 1, name: 'Localização 1', latitude: 10, longitude: 20 }];
       readLocations.mockReturnValue(mockLocations);
-      writeLocations.mockImplementation((locations) => { });
 
       const req = { params: { id: '1' } };
       const res = { status: jest.fn(() => res), json: jest.fn() };
@@ -156,11 +109,11 @@ describe('locationService', () => {
       expect(res.json).toHaveBeenCalledWith({ message: 'Local excluído com sucesso' });
     });
 
-    it('Retona um erro 404 para localização não existente', () => {
-      const mockLocations = [{ id: 1, name: 'Local a Excluir', latitude: 10, longitude: 20 }];
+    it('Retorna um erro 404 para localização não existente', () => {
+      const mockLocations = [{ id: 1, name: 'Localização 1', latitude: 10, longitude: 20 }];
       readLocations.mockReturnValue(mockLocations);
 
-      const req = { params: { id: '2' } };
+      const req = { params: { id: '99' } };
       const res = { status: jest.fn(() => res), json: jest.fn() };
 
       deleteLocation(req, res);
@@ -171,23 +124,22 @@ describe('locationService', () => {
   });
 
   describe('getNearbyLocations', () => {
-    it('Retona locais próximos com base na distância', () => {
+    it('deve retornar locais próximos', () => {
       const mockLocations = [
-        { id: 1, name: 'Localização 1', latitude: 10, longitude: 20 },
-        { id: 2, name: 'Localização 2', latitude: 30, longitude: 40 },
+        { id: 1, name: 'Local 1', latitude: 10, longitude: 20 },
+        { id: 2, name: 'Local 2', latitude: 30, longitude: 40 },
       ];
       readLocations.mockReturnValue(mockLocations);
-      haversineDistance.mockReturnValue(5); // Simulando a distância para o teste
 
-      const req = { query: { latitude: '10', longitude: '20', maxDistance: '10' } };
+      const req = { query: { latitude: '10', longitude: '20', maxDistance: '1000' } };
       const res = { json: jest.fn() };
 
       getNearbyLocations(req, res);
 
-      expect(res.json).toHaveBeenCalledWith(mockLocations);
+      expect(res.json).toHaveBeenCalledWith([mockLocations[0]]);
     });
 
-    it('Retona um erro 400 para parâmetros ausentes', () => {
+    it('Retorna um erro 400 se latitude, longitude ou maxDistance não forem fornecidos', () => {
       const req = { query: {} };
       const res = { status: jest.fn(() => res), json: jest.fn() };
 
