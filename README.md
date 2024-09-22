@@ -1,8 +1,6 @@
-Aqui está uma versão aprimorada do seu README, com formatação clara e instruções detalhadas para facilitar a compreensão:
-
 ---
 
-# Sistema para Cadastro de POIs (Points of Interest)
+# Sistema para Cadastro de POIs
 
 Este é um sistema simples para gerenciar pontos de interesse (POIs). Ele permite criar, listar, buscar, editar e deletar locais. Além disso, você pode buscar locais por nome ou proximidade.
 
