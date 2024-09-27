@@ -1,6 +1,5 @@
 const { readLocations, writeLocations } = require('../services/locationService');
 
-// Listar todos os locais
 const getAllLocations = (req, res) => {
   const locations = readLocations();
   res.json(locations);
@@ -11,40 +10,37 @@ const getLocationById = (req, res) => {
   const locations = readLocations();
 
   const location = locations.find(loc => loc.id === parseInt(id));
-  if (!location) return res.status(404).send('Local não encontrado.');
+  if (!location) return res.status(404).json({ error: 'Local não encontrado.' });
   res.json(location);
 };
 
-// Criar um novo local
+const validateLocationData = (name, latitude, longitude) => {
+  if (!name) {
+    return 'Nome é obrigatório';
+  }
+  if (!latitude || isNaN(latitude) || latitude < 0 || !Number.isInteger(Number(latitude))) {
+    return 'Latitude deve ser um número inteiro positivo';
+  }
+  if (!longitude || isNaN(longitude) || longitude < 0 || !Number.isInteger(Number(longitude))) {
+    return 'Longitude deve ser um número inteiro positivo';
+  }
+  return null;
+};
+
 const createLocation = (req, res) => {
-  const locations = readLocations();
   const { name, latitude, longitude } = req.body;
 
-  if (!name) {
-    return res.status(400).json({ error: 'Nome é obrigatório' });
-  }
-  if (!latitude) {
-    return res.status(400).json({ error: 'Latitude é obrigatória' });
-  }
-  if (!longitude) {
-    return res.status(400).json({ error: 'Longitude é obrigatória' });
+  const validationError = validateLocationData(name, latitude, longitude);
+  if (validationError) {
+    return res.status(400).json({ error: validationError });
   }
 
-  const lat = parseFloat(latitude);
-  const long = parseFloat(longitude);
-
-  if (lat < 0) {
-    return res.status(400).json({ error: 'Latitude deve ser um número positivo' });
-  }
-  if (long < 0) {
-    return res.status(400).json({ error: 'Longitude deve ser um número positivo' });
-  }
-
+  const locations = readLocations();
   const newLocation = {
     id: locations.length > 0 ? locations[locations.length - 1].id + 1 : 1,
     name,
-    latitude: lat,
-    longitude: long,
+    latitude: parseInt(latitude),
+    longitude: parseInt(longitude),
   };
 
   locations.push(newLocation);
@@ -52,58 +48,38 @@ const createLocation = (req, res) => {
   res.status(201).json(newLocation);
 };
 
-// Atualizar local
 const updateLocation = (req, res) => {
-  const locations = readLocations();
   const { id } = req.params;
   const { name, latitude, longitude } = req.body;
 
-  const locationIndex = locations.findIndex(loc => loc.id === parseInt(id, 10));
+  const validationError = validateLocationData(name, latitude, longitude);
+  if (validationError) {
+    return res.status(400).json({ error: validationError });
+  }
+
+  const locations = readLocations();
+  const locationIndex = locations.findIndex(loc => loc.id === parseInt(id));
 
   if (locationIndex === -1) {
     return res.status(404).json({ error: 'Local não encontrado' });
-  }
-  if (!name) {
-    return res.status(400).json({ error: 'Nome é obrigatório' });
-  }
-  if (!latitude) {
-    return res.status(400).json({ error: 'Latitude é obrigatória' });
-  }
-  if (!longitude) {
-    return res.status(400).json({ error: 'Longitude é obrigatória' });
-  }
-
-  const lat = parseFloat(latitude);
-  const long = parseFloat(longitude);
-
-  if (isNaN(lat) || isNaN(long)) {
-    return res.status(400).json({ error: 'Latitude e longitude devem ser números válidos' });
-  }
-  if (lat < 0) {
-    return res.status(400).json({ error: 'Latitude deve ser um número positivo' });
-  }
-  if (long < 0) {
-    return res.status(400).json({ error: 'Longitude deve ser um número positivo' });
   }
 
   locations[locationIndex] = {
     id: parseInt(id),
     name,
-    latitude: lat,
-    longitude: long
+    latitude: parseInt(latitude),
+    longitude: parseInt(longitude)
   };
 
   writeLocations(locations);
   res.status(200).json(locations[locationIndex]);
 };
 
-// Deletar local
 const deleteLocation = (req, res) => {
-  const locations = readLocations();
   const { id } = req.params;
+  const locations = readLocations();
 
   const newLocations = locations.filter(loc => loc.id !== parseInt(id));
-
   if (newLocations.length === locations.length) {
     return res.status(404).json({ error: 'Local não encontrado' });
   }
@@ -111,7 +87,6 @@ const deleteLocation = (req, res) => {
   writeLocations(newLocations);
   res.status(200).json({ message: 'Local excluído com sucesso' });
 };
-
 
 module.exports = {
   getAllLocations,

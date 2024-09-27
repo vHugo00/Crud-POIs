@@ -1,4 +1,5 @@
 "use client";
+
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -17,7 +18,6 @@ export default function EditPage() {
   const router = useRouter();
   const params = useParams();
   const id = params.id;
-
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -49,47 +49,8 @@ export default function EditPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validação do nome
-    if (!formData.name.trim()) {
-      toast.error("O campo 'Nome' não pode estar vazio!", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-      return;
-    }
-
-    // Converte latitude e longitude para string e aplica o trim
-    const lat = String(formData.latitude).trim();
-    const long = String(formData.longitude).trim();
-
-    // Verificação se a latitude e longitude contêm caracteres inválidos
-    if (!/^\d+$/.test(lat) || !/^\d+$/.test(long)) {
-      toast.error("As coordenadas devem conter apenas números inteiros e positivos, sem vírgulas ou pontos!", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-      return;
-    }
-
-    // Converte as coordenadas para números inteiros
-    const latNumber = Number(lat);
-    const longNumber = Number(long);
-
-    // Verifica se as coordenadas são números inteiros e positivos
-    if (!Number.isInteger(latNumber) || latNumber < 0 || !Number.isInteger(longNumber) || longNumber < 0) {
-      toast.error("As coordenadas devem ser números inteiros e positivos!", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-      return;
-    }
-
     try {
-      await axios.put(`http://localhost:5000/api/location/${id}`, {
-        ...formData,
-        latitude: latNumber,
-        longitude: longNumber
-      });
+      await axios.put(`http://localhost:5000/api/location/${id}`, formData);
       toast.success("Local atualizado com sucesso!", {
         position: "top-right",
         autoClose: 1000,
@@ -99,17 +60,14 @@ export default function EditPage() {
         router.push("/register");
       }, 3000);
 
-    } catch (error) {
-      toast.error("Erro ao atualizar local!", {
+    } catch (error: any) {
+      const errorMessage = error?.response?.data?.error || "Erro ao atualizar local!";
+      toast.error(errorMessage, {
         position: "top-right",
         autoClose: 3000,
       });
     }
   };
-
-  if (isLoading) {
-    return <p>Carregando...</p>;
-  }
 
   return (
     <>

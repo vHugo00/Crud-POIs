@@ -1,13 +1,12 @@
 const fs = require('fs');
 const path = require('path');
-const { readLocations, writeLocations } = require('../locationService.js'); // Ajuste o caminho para o seu módulo
+const { readLocations, writeLocations } = require('../locationService.js');
 
 jest.mock('fs');
 
 const filePath = path.join(__dirname, '../../../data/locations.json');
 
 describe('Locations Module', () => {
-  // Mock do console.error
   const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation(() => { });
 
   afterEach(() => {
@@ -15,7 +14,7 @@ describe('Locations Module', () => {
   });
 
   afterAll(() => {
-    consoleErrorMock.mockRestore(); // Restaura a implementação original após todos os testes
+    consoleErrorMock.mockRestore();
   });
 
   test('should read locations from JSON file', () => {

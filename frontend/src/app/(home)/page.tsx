@@ -24,52 +24,41 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validação do nome
-    if (!formData.name.trim()) {
-      toast.error("O campo 'Nome' não pode estar vazio!", {
+    if (!formData.name.trim() || !formData.latitude.trim() || !formData.longitude.trim()) {
+      toast.error("Todos os campos devem ser preenchidos!", {
         position: "top-right",
         autoClose: 3000,
       });
       return;
     }
 
-    const lat = formData.latitude.trim();
-    const long = formData.longitude.trim();
+    const lat = parseFloat(formData.latitude);
+    const long = parseFloat(formData.longitude);
 
-    // Verificação se a latitude e longitude contêm caracteres inválidos
-    if (!/^\d+$/.test(lat) || !/^\d+$/.test(long)) {
-      toast.error("As coordenadas devem conter apenas números inteiros e positivos, sem vírgulas ou pontos!", {
+    if (!Number.isInteger(lat) || !Number.isInteger(long)) {
+      toast.error("As coordenadas devem ser números inteiros!", {
         position: "top-right",
         autoClose: 3000,
       });
       return;
     }
-
-    // Converte as coordenadas para números inteiros
-    const latNumber = Number(lat);
-    const longNumber = Number(long);
-
-    // Verifica se as coordenadas são números inteiros e positivos
-    if (!Number.isInteger(latNumber) || latNumber < 0 || !Number.isInteger(longNumber) || longNumber < 0) {
-      toast.error("As coordenadas devem ser números inteiros e positivos!", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-      return;
-    }
-
-    // Coordenadas válidas, pode prosseguir com o envio
-    console.log("Coordenadas válidas:", { lat: latNumber, long: longNumber });
 
     try {
-      await axios.post('http://localhost:5000/api/location', formData);
+      await axios.post('http://localhost:5000/api/location', {
+        ...formData,
+        latitude: lat,
+        longitude: long,
+      });
+
       toast.success("Local salvo com sucesso!", {
         position: "top-right",
         autoClose: 3000,
       });
+
       setFormData({ name: '', latitude: '', longitude: '' });
-    } catch (error) {
-      toast.error("Verifique se todos os campos foram preenchidos!", {
+    } catch (error: any) {
+      const errorMessage = error?.response?.data?.error || "Erro ao atualizar local!";
+      toast.error(errorMessage, {
         position: "top-right",
         autoClose: 3000,
       });
@@ -101,8 +90,9 @@ export default function Home() {
               <Input.Control
                 name="latitude"
                 id="latitude"
-                type="text"
-                placeholder="x"
+                type="number"
+                step="1"
+                placeholder="Latitude"
                 value={formData.latitude}
                 onChange={handleChange}
               />
@@ -111,8 +101,9 @@ export default function Home() {
               <Input.Control
                 name="longitude"
                 id="longitude"
-                type="text"
-                placeholder="y"
+                type="number"
+                step="1"
+                placeholder="Longitude"
                 value={formData.longitude}
                 onChange={handleChange}
               />

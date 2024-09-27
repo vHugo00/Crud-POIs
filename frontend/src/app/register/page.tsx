@@ -37,31 +37,25 @@ export default function Register() {
     router.push(`/edit/${id}`);
   };
 
-  useEffect(() => {
-    const fetchLocations = async () => {
-      try {
-        const response = await axios.get<Location[]>('http://localhost:5000/api/location');
-        setLocations(response.data);
-      } catch (error) {
-        console.error('Erro ao buscar locais:', error);
-      }
-    };
-    fetchLocations();
-  }, []);
+  const fetchLocations = async () => {
+    try {
+      const params = {
+        searchQuery: searchQuery || undefined,
+        refLatitude: refLatitude || undefined,
+        refLongitude: refLongitude || undefined,
+        maxDistance: maxDistance || undefined,
+      };
 
-  // Função para calcular a distância em R²
-  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
-    return Math.sqrt(Math.pow(lat2 - lat1, 2) + Math.pow(lon2 - lon1, 2));
+      const response = await axios.get<Location[]>('http://localhost:5000/api/location', { params });
+      setLocations(response.data);
+    } catch (error) {
+      console.error('Erro ao buscar locais:', error);
+    }
   };
 
-  // Função de filtro por proximidade
-  const filteredLocations = locations.filter((location) => {
-    if (refLatitude && refLongitude && maxDistance) {
-      const distance = calculateDistance(refLatitude, refLongitude, location.latitude, location.longitude);
-      return distance <= maxDistance;
-    }
-    return true;
-  });
+  useEffect(() => {
+    fetchLocations();
+  }, [searchQuery, refLatitude, refLongitude, maxDistance]);
 
   return (
     <>
@@ -85,7 +79,7 @@ export default function Register() {
       </div>
 
       <div className="mb-4 flex flex-wrap space-x-4">
-        <div className="flex-1 ">
+        <div className="flex-1">
           <label htmlFor="refLatitude" className="block mb-4 mt-4 text-sm font-medium text-zinc-700 dark:text-zinc-100">
             Latitude de Referência
           </label>
@@ -129,8 +123,8 @@ export default function Register() {
               onChange={(e) => setMaxDistance(Number(e.target.value))}
             />
           </Input.Root>
-        </div >
-      </div >
+        </div>
+      </div>
 
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -144,10 +138,8 @@ export default function Register() {
             </tr>
           </thead>
           <tbody>
-            {filteredLocations.filter((location) =>
-              location.name.toLowerCase().includes(searchQuery.toLowerCase())
-            )
-              .reverse()
+            {locations
+              .sort((a, b) => b.id - a.id)
               .map((location) => (
                 <tr key={location.id} className="border-b odd:bg-white even:bg-gray-50">
                   <th scope="row" className="px-6 py-4 font-medium text-gray-900">{location.name}</th>
@@ -166,6 +158,7 @@ export default function Register() {
                 </tr>
               ))}
           </tbody>
+
         </table>
       </div>
     </>
